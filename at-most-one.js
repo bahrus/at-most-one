@@ -25,7 +25,15 @@ export const addAttribMutObserver = ({ attribute, self, nodesToMonitor }) => {
     nodesToMonitor.forEach(node => {
         const attrObserver = new MutationObserver((attrMutationList, attrObserver) => {
             for (const attrMutation of attrMutationList) {
-                debugger;
+                const target = attrMutation.target;
+                if (self.selectedNode === target)
+                    continue;
+                if (!target.hasAttribute(attribute))
+                    continue;
+                if (self.selectedNode !== undefined) {
+                    self.selectedNode.removeAttribute(attribute);
+                }
+                self.selectedNode = target;
             }
         });
         attrObserver.observe(node, attribConfig);

@@ -7,15 +7,19 @@
 </head>
 <body>
     <at-most-one attribute="data-selected">
-        <iframe id=myIFrame></iframe>
+        <iframe id=myIFrame1></iframe>
+        <iframe id=myIFrame2></iframe>
     </at-most-one>
-    <button id=myButton>Click</button>
+    <button id=myButton1>Click 1</button>
+    <button id=myButton2>Click 2</button>
     <script type=module src=../at-most-one.js></script>
     <script>
-        myButton.addEventListener('click', e =>{
-            myIFrame.setAttribute('data-selected', '');
+        myButton1.addEventListener('click', e =>{
+            myIFrame1.setAttribute('data-selected', '');
         });
-
+        myButton2.addEventListener('click', e => {
+            myIFrame2.setAttribute('data-selected', '');
+        })
     </script>
 </body>
 </html>

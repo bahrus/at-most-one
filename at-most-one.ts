@@ -26,7 +26,13 @@ export const addAttribMutObserver = ({attribute, self, nodesToMonitor}: AtMostOn
     nodesToMonitor.forEach(node => {
         const attrObserver = new MutationObserver((attrMutationList, attrObserver) =>{
             for(const attrMutation of attrMutationList){
-                debugger;
+                const target = attrMutation.target as HTMLElement;
+                if(self.selectedNode === target) continue;
+                if(!target.hasAttribute(attribute)) continue;
+                if(self.selectedNode !== undefined){
+                   (self.selectedNode as HTMLElement).removeAttribute(attribute);
+                }
+                self.selectedNode = target;
             }
         });
         attrObserver.observe(node, attribConfig);
@@ -69,6 +75,8 @@ export class AtMostOne extends XtallatX(hydrate(HTMLElement)) {
             if(observer !== undefined) observer.disconnect();
         })
     }
+
+    selectedNode: Node | undefined;
 }
 
 define(AtMostOne);
