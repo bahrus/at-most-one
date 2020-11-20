@@ -2,7 +2,8 @@
   "name": "at-most-one",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "at-most-one.js",
+  "module": "at-most-one.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "web-dev-server --app-index demo/dev.html --node-resolve --watch --open"
