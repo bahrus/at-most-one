@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module":"ESNext",
-		"sourceMap": true,
+		"sourceMap": false,
 		"experimentalDecorators": true,
 		"newLine": "LF",
 		"strict": true,
