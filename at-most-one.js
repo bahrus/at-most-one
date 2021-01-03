@@ -1,5 +1,14 @@
-import { define, XtallatX } from 'xtal-element/xtal-latx.js';
-import { hydrate } from 'trans-render/hydrate.js';
+import { define } from 'xtal-element/lib/define.js';
+import { letThereBeProps } from 'xtal-element/lib/letThereBeProps.js';
+import { getPropDefs } from 'xtal-element/lib/getPropDefs.js';
+import { Reactor } from 'xtal-element/lib/Reactor.js';
+import { hydrate } from 'xtal-element/lib/hydrate.js';
+const propDefGetter = [
+    ({ attribute }) => ({
+        type: String,
+    })
+];
+const propDefs = getPropDefs(propDefGetter);
 export const linkMutObserver = ({ attribute, self }) => {
     self.disconnectObserver();
     if (attribute === undefined)
@@ -27,10 +36,12 @@ export const linkMutObserver = ({ attribute, self }) => {
     self.mutObserver = observer;
 };
 const propActions = [linkMutObserver];
-export class AtMostOne extends XtallatX(hydrate(HTMLElement)) {
+export class AtMostOne extends HTMLElement {
     constructor() {
         super(...arguments);
         this.propActions = propActions;
+        this.reactor = new Reactor(this);
+        this.self = this;
     }
     disconnectedCallback() {
         this.disconnectObserver();
@@ -39,10 +50,13 @@ export class AtMostOne extends XtallatX(hydrate(HTMLElement)) {
         if (this.mutObserver !== undefined)
             this.mutObserver.disconnect();
     }
+    connectedCallback() {
+        hydrate(this, propDefs, {});
+    }
+    onPropChange(name, prop, newVal) {
+        this.reactor.addToQueue(prop, newVal);
+    }
 }
 AtMostOne.is = 'at-most-one';
-AtMostOne.attributeProps = ({ attribute }) => ({
-    str: [attribute],
-    reflect: [attribute]
-});
+letThereBeProps(AtMostOne, propDefs, 'onPropChange');
 define(AtMostOne);

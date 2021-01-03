@@ -1,5 +1,17 @@
-import {define, AttributeProps, XtallatX} from 'xtal-element/xtal-latx.js';
-import {hydrate} from 'trans-render/hydrate.js';
+import {define} from 'xtal-element/lib/define.js';
+import {letThereBeProps} from 'xtal-element/lib/letThereBeProps.js';
+import {getSlicedPropDefs} from 'xtal-element/lib/getSlicedPropDefs.js';
+import {getPropDefs} from 'xtal-element/lib/getPropDefs.js';
+import {destructPropInfo, PropDef, PropAction} from 'xtal-element/types.d.js';
+import {ReactiveSurface, Reactor} from 'xtal-element/lib/Reactor.js';
+import {hydrate} from 'xtal-element/lib/hydrate.js';
+import {AtMostOneProps} from './types.d.js';
+const propDefGetter = [
+    ({attribute}: AtMostOne) =>({
+        type: String,
+    })
+] as destructPropInfo[];
+const propDefs = getPropDefs(propDefGetter);
 
 export const linkMutObserver = ({attribute, self}: AtMostOne) => {
     self.disconnectObserver();
@@ -24,22 +36,21 @@ export const linkMutObserver = ({attribute, self}: AtMostOne) => {
     self.mutObserver = observer;
 }
 
-const propActions = [linkMutObserver];
+const propActions = [linkMutObserver] as PropAction[];
 
-export class AtMostOne extends XtallatX(hydrate(HTMLElement)) {
+export class AtMostOne extends HTMLElement implements ReactiveSurface {
 
     static is = 'at-most-one';
 
-    static attributeProps = ({attribute}: AtMostOne) => ({
-        str: [attribute],
-        reflect: [attribute]
-    } as AttributeProps);
-
     propActions = propActions;
+
+    reactor = new Reactor(this);
 
     attribute: string | undefined;
 
     mutObserver : MutationObserver | undefined;
+
+    self = this;
 
     disconnectedCallback(){
         this.disconnectObserver();
@@ -49,7 +60,20 @@ export class AtMostOne extends XtallatX(hydrate(HTMLElement)) {
         if(this.mutObserver !== undefined) this.mutObserver.disconnect();
     }
 
+    connectedCallback(){
+        hydrate<AtMostOneProps>(this, propDefs, {});
+    }
+
+    onPropChange(name: string, prop: PropDef, newVal: any){
+        this.reactor.addToQueue(prop, newVal)
+    }
+
     selectedNode: HTMLElement | undefined;
 }
-
+letThereBeProps(AtMostOne, propDefs, 'onPropChange')
 define(AtMostOne);
+declare global {
+    interface HTMLElementTagNameMap {
+        "at-most-one": AtMostOne,
+    }
+}
