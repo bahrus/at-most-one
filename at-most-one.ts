@@ -3,7 +3,7 @@ import {letThereBeProps} from 'xtal-element/lib/letThereBeProps.js';
 import {getSlicedPropDefs} from 'xtal-element/lib/getSlicedPropDefs.js';
 import {getPropDefs} from 'xtal-element/lib/getPropDefs.js';
 import {destructPropInfo, PropDef, PropAction} from 'xtal-element/types.d.js';
-import {ReactiveSurface, Reactor} from 'xtal-element/lib/Reactor.js';
+// import {ReactiveSurface, Reactor} from 'xtal-element/lib/Reactor.js';
 import {hydrate} from 'xtal-element/lib/hydrate.js';
 import {AtMostOneProps} from './types.d.js';
 const propDefGetter = [
@@ -44,9 +44,16 @@ export class AtMostOne extends HTMLElement implements ReactiveSurface {
 
     propActions = propActions;
 
-    reactor = new Reactor(this);
+    //reactor = new Reactor(this);
 
-    attribute: string | undefined;
+    _attribute: string | undefined;
+    get attribute(){
+        return this._attribute;
+    }
+    set attribute(nv){
+        this._attribute = nv;
+        linkMutObserver(this);
+    }
 
     mutObserver : MutationObserver | undefined;
 
@@ -65,7 +72,7 @@ export class AtMostOne extends HTMLElement implements ReactiveSurface {
     }
 
     onPropChange(name: string, prop: PropDef, newVal: any){
-        this.reactor.addToQueue(prop, newVal)
+        //this.reactor.addToQueue(prop, newVal)
     }
 
     selectedNode: HTMLElement | undefined;

@@ -1,7 +1,7 @@
 import { define } from 'xtal-element/lib/define.js';
 import { letThereBeProps } from 'xtal-element/lib/letThereBeProps.js';
 import { getPropDefs } from 'xtal-element/lib/getPropDefs.js';
-import { Reactor } from 'xtal-element/lib/Reactor.js';
+// import {ReactiveSurface, Reactor} from 'xtal-element/lib/Reactor.js';
 import { hydrate } from 'xtal-element/lib/hydrate.js';
 const propDefGetter = [
     ({ attribute }) => ({
@@ -40,8 +40,14 @@ export class AtMostOne extends HTMLElement {
     constructor() {
         super(...arguments);
         this.propActions = propActions;
-        this.reactor = new Reactor(this);
         this.self = this;
+    }
+    get attribute() {
+        return this._attribute;
+    }
+    set attribute(nv) {
+        this._attribute = nv;
+        linkMutObserver(this);
     }
     disconnectedCallback() {
         this.disconnectObserver();
@@ -54,7 +60,7 @@ export class AtMostOne extends HTMLElement {
         hydrate(this, propDefs, {});
     }
     onPropChange(name, prop, newVal) {
-        this.reactor.addToQueue(prop, newVal);
+        //this.reactor.addToQueue(prop, newVal)
     }
 }
 AtMostOne.is = 'at-most-one';
