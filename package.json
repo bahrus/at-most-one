@@ -1,6 +1,6 @@
 {
   "name": "at-most-one",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "at-most-one.js",
   "module": "at-most-one.js",
