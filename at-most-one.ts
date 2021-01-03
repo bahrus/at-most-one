@@ -38,7 +38,7 @@ export const linkMutObserver = ({attribute, self}: AtMostOne) => {
 
 const propActions = [linkMutObserver] as PropAction[];
 
-export class AtMostOne extends HTMLElement implements ReactiveSurface {
+export class AtMostOne extends HTMLElement {
 
     static is = 'at-most-one';
 
