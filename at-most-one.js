@@ -1,14 +1,7 @@
 import { define } from 'xtal-element/lib/define.js';
 import { letThereBeProps } from 'xtal-element/lib/letThereBeProps.js';
-import { getPropDefs } from 'xtal-element/lib/getPropDefs.js';
-// import {ReactiveSurface, Reactor} from 'xtal-element/lib/Reactor.js';
+import { getSlicedPropDefs } from 'xtal-element/lib/getSlicedPropDefs.js';
 import { hydrate } from 'xtal-element/lib/hydrate.js';
-const propDefGetter = [
-    ({ attribute }) => ({
-        type: String,
-    })
-];
-const propDefs = getPropDefs(propDefGetter);
 export const linkMutObserver = ({ attribute, self }) => {
     self.disconnectObserver();
     if (attribute === undefined)
@@ -57,12 +50,18 @@ export class AtMostOne extends HTMLElement {
             this.mutObserver.disconnect();
     }
     connectedCallback() {
-        hydrate(this, propDefs, {});
+        hydrate(this, slicedPropDefs, {});
     }
     onPropChange(name, prop, newVal) {
         //this.reactor.addToQueue(prop, newVal)
     }
 }
 AtMostOne.is = 'at-most-one';
-letThereBeProps(AtMostOne, propDefs, 'onPropChange');
+const propDefMap = {
+    attribute: {
+        type: String
+    }
+};
+const slicedPropDefs = getSlicedPropDefs(propDefMap);
+letThereBeProps(AtMostOne, slicedPropDefs, 'onPropChange');
 define(AtMostOne);

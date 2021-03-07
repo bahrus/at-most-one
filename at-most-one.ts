@@ -1,17 +1,10 @@
+import {PropAction, PropDef, PropDefMap} from 'xtal-element/types.d.js';
 import {define} from 'xtal-element/lib/define.js';
 import {letThereBeProps} from 'xtal-element/lib/letThereBeProps.js';
 import {getSlicedPropDefs} from 'xtal-element/lib/getSlicedPropDefs.js';
-import {getPropDefs} from 'xtal-element/lib/getPropDefs.js';
-import {destructPropInfo, PropDef, PropAction} from 'xtal-element/types.d.js';
-// import {ReactiveSurface, Reactor} from 'xtal-element/lib/Reactor.js';
 import {hydrate} from 'xtal-element/lib/hydrate.js';
 import {AtMostOneProps} from './types.d.js';
-const propDefGetter = [
-    ({attribute}: AtMostOne) =>({
-        type: String,
-    })
-] as destructPropInfo[];
-const propDefs = getPropDefs(propDefGetter);
+
 
 export const linkMutObserver = ({attribute, self}: AtMostOne) => {
     self.disconnectObserver();
@@ -68,7 +61,7 @@ export class AtMostOne extends HTMLElement {
     }
 
     connectedCallback(){
-        hydrate<AtMostOneProps>(this, propDefs, {});
+        hydrate<AtMostOneProps>(this, slicedPropDefs, {});
     }
 
     onPropChange(name: string, prop: PropDef, newVal: any){
@@ -77,7 +70,15 @@ export class AtMostOne extends HTMLElement {
 
     selectedNode: HTMLElement | undefined;
 }
-letThereBeProps(AtMostOne, propDefs, 'onPropChange')
+
+const propDefMap: PropDefMap<AtMostOne> = {
+    attribute: {
+        type: String
+    }
+}
+    
+const slicedPropDefs = getSlicedPropDefs(propDefMap);
+letThereBeProps(AtMostOne, slicedPropDefs, 'onPropChange');
 define(AtMostOne);
 declare global {
     interface HTMLElementTagNameMap {
